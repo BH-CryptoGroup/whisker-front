@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Heading } from '../../shared/components/heading';
 import { Logo } from '../../shared/components/logo';
-import styles from './but-template.module.scss';
+import styles from './buy-template.module.scss';
 import { BUY_ROWS_DATA } from './constants';
 import { BuyTokenRow } from '../../entities/buy-token-row/but-token-row';
 import { Typography } from '../../shared/components/typography';
 import { Button } from '../../shared/components/button';
 import { useMediaQuery } from 'react-responsive';
 import { FC, ReactElement } from 'react';
-import backIcon from '../../assets/images/left-arrow.png';
+import backIcon from '../../assets/images/back-arrow.png';
 import { useAppContext } from '../../app/providers/AppContext';
 import { TonConnectModal } from '../ton-connect-modal/ton-connect-modal';
 import { claimWhisks } from '../../shared/api/user/thunks';
@@ -85,12 +85,11 @@ export const BuyTemplate: FC = (): ReactElement => {
                         ))}
                 </div>
                 <div className={styles.buy__balance}>
-                    <img
-                        onClick={onNavigateToMainScreen}
-                        src={backIcon}
-                        className={styles.buy__balance_icon}
-                        alt="back to main screen"
-                    />
+                    <div onClick={onNavigateToMainScreen} className={styles.buy__back}>
+                        <img src={backIcon} className={styles.buy__back_icon} alt="back to main screen" />
+                        <Typography>Back</Typography>
+                    </div>
+
                     <div className={styles.buy__balance_value}>
                         <Typography fontSize={'14px'} fontFamily="Montserrat, sans-serif">
                             Wallet balance
