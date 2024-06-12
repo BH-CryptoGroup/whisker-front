@@ -1,2 +1,2 @@
-export const WHEEL_SPINNING_SECONDS = 4_000;
+export const WHEEL_SPINNING_SECONDS = 5_500;
 

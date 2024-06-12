@@ -8,6 +8,6 @@ type Props = {
 };
 
 export const LottieAnimation: FC<Props> = ({ animationData, loop, autoplay }): ReactElement => {
-    return <Lottie animationData={animationData} loop={loop} autoplay={autoplay || false} />;
+    return <Lottie renderer="svg" animationData={animationData} loop={loop} autoplay={autoplay || false} />;
 };
 

@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FC, ReactElement, Suspense } from 'react';
 import React from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import { AppLayout } from '../layout/AppLayout';
+// import { AppLayout } from '../layout/AppLayout';
 // import { AppLayout } from '../layout/AppLayout';
 
 const BuyPage = React.lazy(() => import('../buy/buy'));
@@ -13,10 +13,8 @@ export const Routing: FC = (): ReactElement => {
         <Suspense fallback={<LoaderScreen />}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/whiskers" element={<AppLayout />}>
-                        <Route path="game" element={<MainPage />} />
-                        <Route path="buy" element={<BuyPage />} />
-                    </Route>
+                    <Route path="/whiskers" element={<MainPage />} />
+                    <Route path="/whiskers/buy" element={<BuyPage />} />
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>
             </BrowserRouter>

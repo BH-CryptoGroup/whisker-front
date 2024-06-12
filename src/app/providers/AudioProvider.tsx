@@ -1,7 +1,13 @@
-import { createContext, useContext, FC, ReactNode, useRef } from 'react';
+import { createContext, useContext, FC, ReactNode, useRef, useState } from 'react';
 import BackgroundSound from '../../assets/sounds/Casino Background Loop.mp3';
 
-const AudioContext = createContext<{ startAudio: () => void } | undefined>(undefined);
+interface AudioContextType {
+    startAudio: () => void;
+    stopAudio: () => void;
+    isPlaying: boolean;
+}
+
+const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export const useAudio = () => {
     const context = useContext(AudioContext);
@@ -13,6 +19,8 @@ export const useAudio = () => {
 
 export const AudioProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const audioContextRef = useRef<AudioContext | null>(null);
+    const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const startAudio = async () => {
         let audioContext = audioContextRef.current;
@@ -26,6 +34,10 @@ export const AudioProvider: FC<{ children: ReactNode }> = ({ children }) => {
             await audioContext.resume();
         }
 
+        if (audioSourceRef.current) {
+            audioSourceRef.current.stop();
+        }
+
         const response = await fetch(BackgroundSound);
         const arrayBuffer = await response.arrayBuffer();
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
@@ -34,8 +46,18 @@ export const AudioProvider: FC<{ children: ReactNode }> = ({ children }) => {
         source.loop = true;
         source.connect(audioContext.destination);
         source.start(0);
+        audioSourceRef.current = source;
+        setIsPlaying(true);
     };
 
-    return <AudioContext.Provider value={{ startAudio }}>{children}</AudioContext.Provider>;
+    const stopAudio = () => {
+        if (audioSourceRef.current) {
+            audioSourceRef.current.stop();
+            audioSourceRef.current = null;
+        }
+        setIsPlaying(false);
+    };
+
+    return <AudioContext.Provider value={{ startAudio, stopAudio, isPlaying }}>{children}</AudioContext.Provider>;
 };
 
