@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "deploy": "gh-pages -d dist"
     },
-    "homepage": "https://pluswhale.github.io/whiskers/",
+    "homepage": "https://bh-cryptogroup.github.io/whiskers/",
     "dependencies": {
         "@ton-community/assets-sdk": "^0.0.4",
         "@ton/core": "^0.56.3",
@@ -48,4 +48,3 @@
         "vite": "^5.2.0"
     }
 }
-

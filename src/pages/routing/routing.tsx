@@ -11,10 +11,10 @@ const MainPage = React.lazy(() => import('../main/main'));
 export const Routing: FC = (): ReactElement => {
     return (
         <Suspense fallback={<LoaderScreen />}>
-            <BrowserRouter>
+            <BrowserRouter basename="/whiskers">
                 <Routes>
-                    <Route path="/whiskers" element={<MainPage />} />
-                    <Route path="/whiskers/buy" element={<BuyPage />} />
+                    <Route path="/" element={<MainPage />} />
+                    <Route path="/buy" element={<BuyPage />} />
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>
             </BrowserRouter>
