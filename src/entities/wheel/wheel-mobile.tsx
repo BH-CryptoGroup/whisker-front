@@ -15,6 +15,10 @@ import WinAnimation100 from '../../assets/animations/100-points-win-animation.js
 import { Flip, toast } from 'react-toastify';
 import { SectorData, sectorsData } from './constants';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
+import { useAudio } from '../../app/providers/AudioProvider';
+import muteMusicImage from '../../assets/images/no-sound.png';
+import enableMusicImage from '../../assets/images/medium-volume.png';
+import fastForwardButton from '../../assets/images/fast-forward-button.png';
 
 interface WheelMobileProps {
     isAvailableToSpin: boolean;
@@ -32,8 +36,9 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
     const { isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
+    const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
-    const [winAnimation, setWinAnimation] = useState<WinAnimation | null>(null);
+    const [winAnimation, setWinAnimation] = useState<WinAnimation | null>(100);
     const [isNeedRotateSpinIcon, setIsNeedRotateSpinIcon] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -439,6 +444,24 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 style={{ width: `${width}px`, height: `${height}px` }}
                 id="canvas"
             />
+            <div className={styles.app__fast_forward}>
+                <img onClick={startAudio} className={styles.app__fast_forward__icon} src={fastForwardButton} />
+            </div>
+            <div className={styles.app__enable_or_disable_music}>
+                {isPlaying ? (
+                    <img
+                        onClick={stopAudio}
+                        className={styles.app__enable_or_disable_music__icon}
+                        src={muteMusicImage}
+                    />
+                ) : (
+                    <img
+                        onClick={startAudio}
+                        className={styles.app__enable_or_disable_music__icon}
+                        src={enableMusicImage}
+                    />
+                )}
+            </div>
             <div
                 onClick={handleSpinButtonClick}
                 className={`${styles.app__spin_button} ${!isAvailableToSpin || isNeedRotateSpinIcon ? styles.disable : ''}`}
