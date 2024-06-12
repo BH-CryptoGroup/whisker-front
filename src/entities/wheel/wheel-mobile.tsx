@@ -158,11 +158,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setTimeout(() => {
                 setIsNeedRotateSpinIcon(false);
-            }, 10_500);
+            }, 8_500);
 
             setTimeout(() => {
                 setIsDisplayAnimation(false);
-            }, 10_500);
+            }, 8_500);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
