@@ -15,7 +15,7 @@ export const Routing: FC = (): ReactElement => {
                 <Routes>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/buy" element={<BuyPage />} />
-                    <Route path="*" element={<div>Not found</div>} />
+                    <Route path="*" element={<div>Not found!</div>} />
                 </Routes>
             </BrowserRouter>
         </Suspense>
