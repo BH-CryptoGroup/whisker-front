@@ -3,6 +3,7 @@ import kitty from '../../assets/images/kitty.png';
 import loaderIcon from '../../assets/images/loader.png';
 import { useAppContext } from '../../app/providers/AppContext';
 import soundWheel from '../../assets/sounds/Fortune-Prize-Wheel-01.mp3';
+import quickWinSound from '../../assets/sounds/quick-win-sound.mp3';
 import { Typography } from '../../shared/components/typography';
 
 import styles from './wheel.module.scss';
@@ -38,9 +39,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     const { isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
+    const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
     const [winAnimation, setWinAnimation] = useState<WinAnimation | null>(100);
     const [isNeedRotateSpinIcon, setIsNeedRotateSpinIcon] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const quickWinSoundRef = useRef<HTMLAudioElement>(null);
     const [imageLoaded, setImageLoaded] = useState(false);
     const image = useRef(new Image());
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -128,7 +131,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
     const handleSpinButtonClick = () => {
         if (isUserLoggedIn) {
-            if (isNeedRotateSpinIcon || !isAvailableToSpin) return; //
+            if (isNeedRotateSpinIcon || !isAvailableToSpin || isFastSpinning) return; //
 
             if (isDisplayAnimation) setIsDisplayAnimation(false);
 
@@ -138,7 +141,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 updateFreeSpins();
             }
 
-            twistWheel();
+            twistWheel(5000, WHEEL_SPINNING_SECONDS + 1000);
 
             setIsNeedRotateSpinIcon(true);
 
@@ -150,19 +153,13 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 setIsDisplayAnimation(true);
             }, WHEEL_SPINNING_SECONDS);
 
-            // setTimeout(() => {
-            //     if (audioRef.current) {
-            //         audioRef.current.pause();
-            //     }
-            // }, 7_000);
-
             setTimeout(() => {
                 setIsNeedRotateSpinIcon(false);
-            }, 8_500);
+            }, 7000);
 
             setTimeout(() => {
                 setIsDisplayAnimation(false);
-            }, 8_500);
+            }, 7_000);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -178,8 +175,50 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         }
     };
 
-    function twistWheel() {
-        const randomSectorValue = randomSector();
+    const handleFastSpinButtonClick = () => {
+        if (isUserLoggedIn) {
+            if (isNeedRotateSpinIcon || !isAvailableToSpin || isFastSpinning) return; //
+
+            setIsFastSpinning(true);
+
+            if (!isFreeSpins) {
+                updateBonusSpins();
+            } else {
+                updateFreeSpins();
+            }
+
+            twistWheel(500, 500);
+
+            setTimeout(() => {
+                if (quickWinSoundRef.current) {
+                    quickWinSoundRef.current.play();
+                }
+            }, 200);
+
+            setTimeout(() => {
+                setIsFastSpinning(false);
+                if (quickWinSoundRef.current) {
+                    quickWinSoundRef.current.pause();
+                    quickWinSoundRef.current.currentTime = 0;
+                }
+            }, 2000);
+        } else {
+            toast.error(`Cannot spin it`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
+        }
+    };
+
+    function twistWheel(duration: number, delay: number) {
+        const randomSectorValue = randomSector(delay);
 
         const randomSectorCenter = -(oneSectorAngle * ((randomSectorValue as number) + 0.5)).toFixed(4);
 
@@ -193,20 +232,20 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         if (winAngleRef.current < 0) winAngleRef.current++;
 
         animate({
-            duration: 5000,
+            duration: duration,
             timing: timing,
         });
     }
 
     //get random sector according to sectors probabilities
-    function randomSector() {
+    function randomSector(delay: number) {
         const randomNumber = Math.floor(Math.random() * 360) + 1; // 1...360
 
         for (let i = 0, upperBorder = 0; i < sectorsData?.length; i++) {
             upperBorder += sectorsData?.[i]?.probability as number;
             if (randomNumber < upperBorder) {
                 setWinAnimation(sectorsData?.[i]?.value as WinAnimation);
-                updateTempWinScore(sectorsData?.[i]?.value); // add score setter and make request here
+                updateTempWinScore(sectorsData?.[i]?.value, delay); // add score setter and make request here
                 return i;
             }
         }
@@ -437,6 +476,10 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 <source src={soundWheel} type="audio/mpeg" />
                 Your browser does not support the audio element.
             </audio>
+            <audio ref={quickWinSoundRef}>
+                <source src={quickWinSound} type="audio/mpeg" />
+                Your browser does not support the audio element.
+            </audio>
             <canvas
                 ref={canvasRef}
                 width={dpiWidth}
@@ -445,7 +488,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 id="canvas"
             />
             <div className={styles.app__fast_forward}>
-                <img onClick={startAudio} className={styles.app__fast_forward__icon} src={fastForwardButton} />
+                <img
+                    onClick={handleFastSpinButtonClick}
+                    className={`${styles.app__fast_forward__icon} ${isFastSpinning ? styles.app__fast_forward__icon_active : ''}  ${!isAvailableToSpin || isNeedRotateSpinIcon ? styles.app__fast_forward__icon_non_active : ''}`}
+                    src={fastForwardButton}
+                />
             </div>
             <div className={styles.app__enable_or_disable_music}>
                 {!isPlaying ? (
@@ -460,7 +507,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
             </div>
             <div
                 onClick={handleSpinButtonClick}
-                className={`${styles.app__spin_button} ${!isAvailableToSpin || isNeedRotateSpinIcon ? styles.disable : ''}`}
+                className={`${styles.app__spin_button} ${!isAvailableToSpin || isNeedRotateSpinIcon || isFastSpinning ? styles.disable : ''}`}
             >
                 <img
                     className={`${styles.app__spin_button__loader} ${isNeedRotateSpinIcon ? styles.rotate : ''}`}

@@ -162,7 +162,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }
 
     // Actions
-    const updateTempWinScore = (score: number) => {
+    const updateTempWinScore = (score: number, delay: number) => {
         if (userData?.userId) {
             spinWheelByUser(userData?.userId, {
                 winScore: score,
@@ -175,7 +175,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                             points: prevUserData.points + score,
                             unclaimedWhisks: prevUserData.unclaimedWhisks + score,
                         }));
-                    }, WHEEL_SPINNING_SECONDS + 1000); // because a little delay in animation
+                    }, delay); // because a little delay in animation
                 }
             });
         }
