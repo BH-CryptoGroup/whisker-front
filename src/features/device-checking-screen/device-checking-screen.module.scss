@@ -1,0 +1,40 @@
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+
+    padding-top: 100px;
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .device_checking_icon {
+        height: 100px;
+        filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(168deg) brightness(109%)
+            contrast(101%);
+    }
+
+    .sub_text {
+        text-align: center !important;
+        font-weight: 600;
+        line-height: 42px !important;
+    }
+
+    .logo_and_heading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .heading_wrapper {
+        transform: translateY(-16px);
+        z-index: 2;
+    }
+}
+

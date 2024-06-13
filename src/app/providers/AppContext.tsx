@@ -5,6 +5,8 @@ import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
+import DeviceCheckingScreen from '../../features/device-checking-screen/DeviceCheckingScreen';
+import MobileDetect from 'mobile-detect';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -85,6 +87,10 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [isAvailableToSpin, setIsAvailableToSpin] = useState<boolean>(false);
     const [isAppLoaded, setIsAppLoaded] = useState<boolean>(false);
     const uriParams = parseUriParamsLine(window.location.href?.split('?')?.[1]);
+    const userAgent = navigator.userAgent;
+    const md = new MobileDetect(userAgent);
+    const isMobileDevice = md.mobile() !== null;
+    const isTelegramWebApp = userAgent.includes('Telegram');
 
     useEffect(() => {
         return () => {
@@ -146,6 +152,10 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             setIsLoading(false);
         }, 4000);
     }, [userData?.spinsAvailable, userData?.bonusSpins]);
+
+    if (!isMobileDevice || isTelegramWebApp) {
+        return <DeviceCheckingScreen />;
+    }
 
     if (loading && !isAppLoaded) {
         return <LoaderScreen />;

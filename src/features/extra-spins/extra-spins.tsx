@@ -28,7 +28,7 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
     }, []);
 
     const onNavigateToBuyPage = () => {
-        navigate('/whiskers/buy');
+        navigate('/buy');
     };
 
     return (
