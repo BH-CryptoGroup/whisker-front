@@ -448,18 +448,14 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 <img onClick={startAudio} className={styles.app__fast_forward__icon} src={fastForwardButton} />
             </div>
             <div className={styles.app__enable_or_disable_music}>
-                {isPlaying ? (
-                    <img
-                        onClick={stopAudio}
-                        className={styles.app__enable_or_disable_music__icon}
-                        src={muteMusicImage}
-                    />
+                {!isPlaying ? (
+                    <button onClick={startAudio} className={styles.app__enable_or_disable_music__button}>
+                        <img className={styles.app__enable_or_disable_music__icon} src={enableMusicImage} />
+                    </button>
                 ) : (
-                    <img
-                        onClick={startAudio}
-                        className={styles.app__enable_or_disable_music__icon}
-                        src={enableMusicImage}
-                    />
+                    <button onClick={stopAudio} className={styles.app__enable_or_disable_music__button}>
+                        <img className={styles.app__enable_or_disable_music__icon} src={muteMusicImage} />
+                    </button>
                 )}
             </div>
             <div

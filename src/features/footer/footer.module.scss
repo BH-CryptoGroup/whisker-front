@@ -24,6 +24,18 @@
             align-items: flex-start;
             gap: 5px;
         }
+
+        &_tokens {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        &_wallet {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
     }
 }
 
