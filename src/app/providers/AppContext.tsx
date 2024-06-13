@@ -4,7 +4,6 @@ import { loginUser, referralUser, spinWheelByUser } from '../../shared/api/user/
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
-import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
 import DeviceCheckingScreen from '../../features/device-checking-screen/DeviceCheckingScreen';
 import MobileDetect from 'mobile-detect';
 
@@ -47,7 +46,7 @@ interface AppContextType {
     updateFreeSpins: () => void;
     updateUnclaimedWhisks: () => void;
     updateBonusSpins: (countSpins?: number) => void;
-    updateTempWinScore: (score: number) => void;
+    updateTempWinScore: (score: number, delay: number) => void;
 }
 
 // Create the context

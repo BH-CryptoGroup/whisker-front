@@ -1,7 +1,6 @@
 import { Heading } from '../../shared/components/heading';
 import { Logo } from '../../shared/components/logo';
 import { WheelMobile } from '../../entities/wheel/wheel-mobile';
-import { WheelDesktop } from '../../entities/wheel/wheel-desktop';
 
 import styles from './spin-template.module.scss';
 import { FC, ReactElement } from 'react';
@@ -23,11 +22,8 @@ export const SpinTemplate: FC<Props> = ({ isMobile, isAvailableToSpin, isUserLog
                     </Heading>
                 </span>
             </div>
-            {isMobile ? (
-                <WheelMobile isUserLoggedIn={isUserLoggedIn} isAvailableToSpin={isAvailableToSpin} />
-            ) : (
-                <WheelDesktop isUserLoggedIn={isUserLoggedIn} isAvailableToSpin={isAvailableToSpin} />
-            )}
+
+            <WheelMobile isUserLoggedIn={isUserLoggedIn} isAvailableToSpin={isAvailableToSpin} />
         </div>
     );
 };
