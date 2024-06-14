@@ -34,8 +34,6 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
     const correctedLastTime = () => {
         const res = getTimeLeftFromTimestamp(lastSpinTime?.[0] || '');
 
-        console.log('res', res);
-
         if (res.includes('NaN')) {
             return '...';
         } else {
