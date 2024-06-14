@@ -85,7 +85,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     const dpiTextFontSize = textFontSize * increaseCoeff;
     const textStyles = {
         fillColor: '#fff',
-        textFont: `${dpiTextFontSize}px Roundy Rainbows, sans-serif`,
+        textFont: `${dpiTextFontSize}px Roundy Rainbows`,
     };
     const turns = 4; //number of turns for one spin
     const oneSectorAngle = 1 / sectorsData.length;

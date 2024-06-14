@@ -49,6 +49,18 @@ interface AppContextType {
     updateTempWinScore: (score: number, delay: number) => void;
 }
 
+const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
+    try {
+        const res = await loginUser(userId); // Adjust the endpoint and method as needed
+        if (res) {
+            setUserData(res.user);
+            // Assume the backend handles spin recharging
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
 // Create the context
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -113,17 +125,17 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // if (tgUser?.id?.toString()) {
-                const res = await loginUser(tgUser?.id?.toString() || '574813379'); //574813379
-                if (res) {
-                    setUserData(res.user);
-                    if (uriParams?.tgWebAppStartParam) {
-                        await referralUser(res.user.userId, {
-                            referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
-                        });
+                if (tgUser?.id?.toString()) {
+                    const res = await loginUser(tgUser?.id?.toString());
+                    if (res) {
+                        setUserData(res.user);
+                        if (uriParams?.tgWebAppStartParam) {
+                            await referralUser(res.user.userId, {
+                                referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
+                            });
+                        }
                     }
                 }
-                // }
             } catch (error) {
                 console.error('Error during login:', error);
             }
@@ -152,6 +164,25 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }, 4000);
     }, [userData?.spinsAvailable, userData?.bonusSpins]);
 
+    useEffect(() => {
+        if (userData && userData?.lastSpinTime?.length > 0) {
+            const checkSpinTimes = () => {
+                const now = new Date();
+                userData.lastSpinTime.forEach(async (spinTime) => {
+                    if (new Date(spinTime) <= now) {
+                        if (tgUser?.id?.toString()) {
+                            await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
+                        }
+                    }
+                });
+            };
+
+            const interval = setInterval(checkSpinTimes, 1000);
+
+            return () => clearInterval(interval);
+        }
+    }, [tgUser?.id, userData?.lastSpinTime]);
+
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
     }
@@ -166,8 +197,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             spinWheelByUser(userData?.userId, {
                 winScore: score,
                 isFreeSpin: isFreeSpins,
-            }).then((res) => {
+            }).then(async (res) => {
                 if (res && res.status && res?.status === 200) {
+                    await fetchAndUpdateUserData(tgUser?.id?.toString() || '574813379', setUserData);
                     setTimeout(() => {
                         setUserData((prevUserData: any) => ({
                             ...prevUserData,
@@ -180,7 +212,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
     };
 
-    const updateFreeSpins = () => {
+    const updateFreeSpins = async () => {
         if (userData) {
             setUserData((prevUserData: any) => ({
                 ...prevUserData,

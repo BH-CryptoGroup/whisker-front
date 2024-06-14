@@ -36,6 +36,10 @@
                 transition: transform 1s ease;
             }
 
+            &__time_text {
+                transform: translateY(2px);
+            }
+
             .rotate {
                 animation: rotate180 1s forwards;
             }
@@ -59,6 +63,15 @@
                 gap: 10px;
             }
         }
+    }
+}
+
+@keyframes rotate180 {
+    0% {
+        transform: rotate(0deg); // Start rotation from 0 degrees
+    }
+    100% {
+        transform: rotate(180deg); // Rotate by 180 degrees
     }
 }
 

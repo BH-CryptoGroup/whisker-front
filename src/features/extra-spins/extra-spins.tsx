@@ -17,7 +17,7 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
     const navigate = useNavigate();
     const [rotateIcon, setRotateIcon] = useState<boolean>(false);
     const timeIconRef = useRef<HTMLImageElement>(null);
-    const lastSpinTime = userData?.lastSpinTime[userData?.lastSpinTime?.length - 1];
+    const lastSpinTime = userData?.lastSpinTime;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -29,6 +29,18 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
 
     const onNavigateToBuyPage = () => {
         navigate('/buy');
+    };
+
+    const correctedLastTime = () => {
+        const res = getTimeLeftFromTimestamp(lastSpinTime?.[0] || '');
+
+        console.log('res', res);
+
+        if (res.includes('NaN')) {
+            return '...';
+        } else {
+            return res;
+        }
     };
 
     return (
@@ -53,8 +65,12 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
                                 className={`${styles.app__extra_spins__free_spin__time_icon} ${rotateIcon ? styles.rotate : ''}`}
                                 src={timeIcon}
                             />
-                            <Typography fontSize={isMobile ? '12px' : '23px'} fontFamily="Montserrat, sans-serif">
-                                New spin in <br /> {getTimeLeftFromTimestamp(lastSpinTime || '')}
+                            <Typography
+                                className={styles.app__extra_spins__free_spin__time_text}
+                                fontSize={isMobile ? '12px' : '23px'}
+                                fontFamily="Montserrat, sans-serif"
+                            >
+                                New spin in <br /> {correctedLastTime()}
                             </Typography>
                         </div>
                     ) : null}
