@@ -53,8 +53,9 @@ const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserDa
     try {
         const res = await loginUser(userId); // Adjust the endpoint and method as needed
         if (res) {
-            setUserData(res.user);
-            // Assume the backend handles spin recharging
+            setUserData((prev: UserData): UserData => {
+                return { ...prev, lastSpinTime: res?.user?.lastSpinTime };
+            });
         }
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -199,7 +200,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 isFreeSpin: isFreeSpins,
             }).then(async (res) => {
                 if (res && res.status && res?.status === 200) {
-                    await fetchAndUpdateUserData(tgUser?.id?.toString() || '574813379', setUserData);
+                    if (tgUser?.id?.toString()) {
+                        await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
+                    }
                     setTimeout(() => {
                         setUserData((prevUserData: any) => ({
                             ...prevUserData,
