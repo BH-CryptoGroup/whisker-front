@@ -53,6 +53,7 @@ const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserDa
     try {
         const res = await loginUser(userId); // Adjust the endpoint and method as needed
         if (res) {
+            //@ts-ignore
             setUserData((prev: UserData): UserData => {
                 return { ...prev, lastSpinTime: res?.user?.lastSpinTime };
             });
